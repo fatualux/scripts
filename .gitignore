@@ -7,4 +7,5 @@
 archClean.sh
 realtime-transcriber.py
 updatemirrors.sh
+git.sh
 
