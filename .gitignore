@@ -1,0 +1,10 @@
+# ignore .txt files
+*.txt
+
+# ignore log files
+*.log
+
+archClean.sh
+realtime-transcriber.py
+updatemirrors.sh
+
