@@ -21,11 +21,11 @@ text="Which language?"
 h_text=${#text}
 printf "%*s\n" $((COLS/2+h_text/2)) "$text"
 
-# List downloaded language
+# List some of the available languages
 ListLanguages() {
   # Display the list of choices to the user
   echo ""
-  echo "Chose a model:"
+  echo "Chose a language:"
   echo "1. English"
   echo "2. Italian"
   echo "3. Spanish"
