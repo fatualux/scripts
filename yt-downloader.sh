@@ -162,7 +162,7 @@ if [ "$ACTION" = "extract" ]; then
   InsertURL
   ListAudioFormats
   ChooseName
-  yt-dlp -f "ba" -x --audio-format "$A_FORMAT" "$URL" -o "$NAME.%(ext)s"
+  yt-dlp --audio-quality "ba" -x --audio-format "$A_FORMAT" "$URL" -o "$NAME.%(ext)s"
   echo "Done!"
 fi
 if [ "$ACTION" = "convert" ]; then
