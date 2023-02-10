@@ -6,60 +6,59 @@
 # To update whispeer: pip install --upgrade --no-deps --force-reinstall git+https://github.com/openai/whisper.git
 # See docs at https://github.com/openai/whisper
 
-/bin/dunstify '.:Whisper:.'
 
-COLS=$(tput cols)
-text="Which media do you want to transcribe?"
-h_text=${#text}
+################################ FUNCTIONS ################################
 
-printf "%*s\n" $((COLS/2+h_text/2)) "$text"
-
-read -r FILE
-
-COLS=$(tput cols)
-text="Which language?"
-h_text=${#text}
-printf "%*s\n" $((COLS/2+h_text/2)) "$text"
-
-# List some of the available languages
 ListLanguages() {
   # Display the list of choices to the user
   echo ""
-  echo "Chose a language:"
+  echo "Choose the language of the media to transcribe:"
   echo "1. English"
   echo "2. Italian"
-  echo "3. Spanish"
-  echo "4. French"
-  echo "5. Autodetect"
+  echo "3. French"
+  echo "4. Spanish"
+  echo "5. Russian"
+  echo "6. German"
+  echo "7. Chinese"
+  echo "8. Japanese"
+  echo "9. Hindi"
   # Read the user's input and save it in a variable
   read -p "Enter your selection: " choice
-
-  # Export the user_input variable
-  export choice
+  # Use the if statement to perform different actions based on the user's input
+  if [ "$choice" = "1" ]; then
+    echo "You selected English."
+    LANG="English"
+  elif [ "$choice" = "2" ]; then
+    echo "You selected Italian"
+    LANG="Italian"
+  elif [ "$choice" = "3" ]; then
+    echo "You selected French"
+    LANG="French"
+  elif [ "$choice" = "4" ]; then
+    echo "You selected Spanish"
+    LANG="Spanish"
+  elif [ "$choice" = "5" ]; then
+    echo "You selected Russian"
+    LANG="Russian"
+  elif [ "$choice" = "6" ]; then
+    echo "You selected German"
+    LANG="German"
+  elif [ "$choice" = "7" ]; then
+    echo "You selected Chinese"
+    LANG="Chinese"
+  elif [ "$choice" = "8" ]; then
+    echo "You selected Japanese"
+    LANG="Japanese"
+  elif [ "$choice" = "9" ]; then
+    echo "You selected Hindi"
+    LANG="Hindi"
+  else
+    echo "Invalid selection"
+  fi
+  # Export the user's input variable
+  export LANG
 }
-# Call the function
-ListLanguages
-# Use the if statement to perform different actions based on the user's input
-if [ "$choice" = "1" ]; then
-  echo "You selected English."
-  LANG="--language English"
-elif [ "$choice" = "2" ]; then
-  echo "You selected Italian"
-  LANG="--language Italian"
-elif [ "$choice" = "3" ]; then
-  echo "You selected Spanish"
-  LANG="--language Spanish"
-elif [ "$choice" = "4" ]; then
-  echo "You selected French"
-  LANG="--language French"
-elif [ "$choice" = "5" ]; then
-  echo "You selected Autodetect"
-  LANG=""
-else
-  echo "Invalid selection"
-fi
 
-# List devices
 ListDevices() {
   # Display the list of choices to the user
   echo ""
@@ -68,28 +67,23 @@ ListDevices() {
   echo "2. CPU"
   # Read the user's input and save it in a variable
   read -p "Enter your selection: " choice
-
-  # Export the user_input variable
-  export choice
+  if [ "$choice" = "1" ]; then
+    echo "You selected CUDA."
+    DEVICE="cuda"
+  elif [ "$choice" = "2" ]; then
+    echo "You selected CPU"
+    DEVICE="cpu"
+  else
+    echo "Invalid selection"
+  fi
+  # Export the user's input variable
+  export DEVICE
 }
-# Call the function
-ListDevices
-# Use the if statement to perform different actions based on the user's input
-if [ "$choice" = "1" ]; then
-  echo "You selected CUDA."
-  DEVICE="cuda"
-elif [ "$choice" = "2" ]; then
-  echo "You selected CPU"
-  DEVICE="cpu"
-else
-  echo "Invalid selection"
-fi
 
-# List downloaded model
 ListModels() {
   # Display the list of choices to the user
   echo ""
-  echo "Chose a model:"
+  echo "Choose a model:"
   echo "1. tiny"
   echo "2. base"
   echo "3. small"
@@ -97,57 +91,73 @@ ListModels() {
   echo "5. large"
   # Read the user's input and save it in a variable
   read -p "Enter your selection: " choice
-
-  # Export the user_input variable
-  export choice
-}
-# Call the function
-ListModels
-# Use the if statement to perform different actions based on the user's input
-if [ "$choice" = "1" ]; then
-  echo "You selected tiny."
-  MODEL="tiny"
-elif [ "$choice" = "2" ]; then
-  echo "You selected base"
-  MODEL="base"
-elif [ "$choice" = "3" ]; then
-  echo "You selected small"
-  MODEL="small"
-elif [ "$choice" = "4" ]; then
-  echo "You selected medium"
-  MODEL="medium"
-elif [ "$choice" = "5" ]; then
-  echo "You selected large"
-  MODEL="large-v2"
-  DEVICE="cuda"
-else
-  echo "Invalid selection"
+  if [ "$choice" = "1" ]; then
+    echo "You selected tiny."
+    MODEL="tiny"
+  elif [ "$choice" = "2" ]; then
+    echo "You selected base"
+    MODEL="base"
+  elif [ "$choice" = "3" ]; then
+    echo "You selected small"
+    MODEL="small"
+  elif [ "$choice" = "4" ]; then
+    echo "You selected medium"
+    MODEL="medium"
+  elif [ "$choice" = "5" ]; then
+    echo "You selected large"
+    MODEL="large-v2"
+    DEVICE="cuda"
+  else
+    echo "Invalid selection"
+  # Export the user's input variable
+  export DEVICE
 fi
+}
 
 # List tasks
 ListTasks() {
   # Display the list of choices to the user
   echo ""
-  echo "Chose a task:"
+  echo "Choose a task:"
   echo "1. Transcribe"
   echo "2. Translate"
   # Read the user's input and save it in a variable
   read -p "Enter your selection: " choice
-
+  if [ "$choice" = "1" ]; then
+    echo "You selected transcribe."
+    TASK="transcribe"
+  elif [ "$choice" = "2" ]; then
+    echo "You selected translate"
+    TASK="translate"
+  else
+    echo "Invalid selection"
+  fi
   # Export the user_input variable
-  export choice
+  export TASK
 }
-# Call the function
-ListTasks
-# Use the if statement to perform different actions based on the user's input
-if [ "$choice" = "1" ]; then
-  echo "You selected transcribe."
-  TASK="transcribe"
-elif [ "$choice" = "2" ]; then
-  echo "You selected translate"
-  TASK="translate"
-else
-  echo "Invalid selection"
-fi
 
-whisper "$FILE" "$LANG" --model "$MODEL" --model_dir $HOME/.cache/whisper/ --device "$DEVICE" --task "$TASK"
+SelectFile() {
+  files=$(zenity --title "Which file do you want to transcribe?"  --file-selection --multiple --filename=$HOME/)
+  [[ "$files" ]] || exit 1
+  echo $files | tr "|" "\n" | while read file
+  do
+    echo "$file" >> files.txt
+  done
+}
+################################## SCRIPT ##################################
+
+/bin/dunstify '.:Whisper:.'
+
+SelectFile
+ListLanguages
+ListDevices
+ListModels
+ListTasks
+
+IFS=$'\n'
+for FILE in $(cat files.txt);
+do
+  whisper "$FILE" --language "$LANG" --model "$MODEL" --model_dir $HOME/.cache/whisper/ --device "$DEVICE" --task "$TASK"
+done
+rm files.txt
+echo "Done!"
