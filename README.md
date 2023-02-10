@@ -55,3 +55,8 @@ See docs at https://github.com/openai/whisper
 It is a basic bash script which requires the installation of `pacman` and `tar`, intended to speed up backing up of packages and configs.
 By editing line 18 and line 19 you can modify the lists of files and folders according to your needs.
 It also creates two different text files containing the names of the packages installed, from official repo as far as AUR/manually installed.
+
+## tesseract.sh
+
+It is a basic bash script to interact with Tesseract OCR.
+It requires the installation of **tesseract-ocr** (https://github.com/tesseract-ocr/tesseract-ocr).
