@@ -4,96 +4,167 @@
 /bin/dunstify '.:Youtube-Downloader:.'
 
 ################################ FUNCTIONS ################################
+# creates a list of options selectable by the arrow keys
+function select_option {
+
+    # little helpers for terminal print control and key input
+    ESC=$( printf "\033")
+    cursor_blink_on()  { printf "$ESC[?25h"; }
+    cursor_blink_off() { printf "$ESC[?25l"; }
+    cursor_to()        { printf "$ESC[$1;${2:-1}H"; }
+    print_option()     { printf "   $1 "; }
+    print_selected()   { printf "  $ESC[7m $1 $ESC[27m"; }
+    get_cursor_row()   { IFS=';' read -sdR -p $'\E[6n' ROW COL; echo ${ROW#*[}; }
+    key_input()        { read -s -n3 key 2>/dev/null >&2
+                         if [[ $key = $ESC[A ]]; then echo up;    fi
+                         if [[ $key = $ESC[B ]]; then echo down;  fi
+                         if [[ $key = ""     ]]; then echo enter; fi; }
+
+    # initially print empty new lines (scroll down if at bottom of screen)
+    for opt; do printf "\n"; done
+
+    # determine current screen position for overwriting the options
+    local lastrow=`get_cursor_row`
+    local startrow=$(($lastrow - $#))
+
+    # ensure cursor and input echoing back on upon a ctrl+c during read -s
+    trap "cursor_blink_on; stty echo; printf '\n'; exit" 2
+    cursor_blink_off
+
+    local selected=0
+    while true; do
+        # print options by overwriting the last lines
+        local idx=0
+        for opt; do
+            cursor_to $(($startrow + $idx))
+            if [ $idx -eq $selected ]; then
+                print_selected "$opt"
+            else
+                print_option "$opt"
+            fi
+            ((idx++))
+        done
+
+        # user key control
+        case `key_input` in
+            enter) break;;
+            up)    ((selected--));
+                   if [ $selected -lt 0 ]; then selected=$(($# - 1)); fi;;
+            down)  ((selected++));
+                   if [ $selected -ge $# ]; then selected=0; fi;;
+        esac
+    done
+
+    # cursor position back to normal
+    cursor_to $lastrow
+    printf "\n"
+    cursor_blink_on
+
+    return $selected
+}
+
 ListActions() {
-  echo ""
-  echo "Choose an action to perform:"
-  echo "1. Download a video from a given URL"
-  echo "2. Extract the audio from a video on the Internet"
-  echo "3. Convert a media file into another format"
-  echo "4. Download video playlist"
-  echo "5. Download audio playlist"
-  # Read the user's input and save it in a variable
-  read -p "Enter your selection: " choice
-  # if statement to perform different actions based on the user's input
-  if [ "$choice" = "1" ]; then
-    ACTION="download"
-  elif [ "$choice" = "2" ]; then
-    ACTION="extract"
-  elif [ "$choice" = "3" ]; then
-    ACTION="convert"
-  elif [ "$choice" = "4" ]; then
-    ACTION="v_playlist"
-  elif [ "$choice" = "5" ]; then
-    ACTION="a_playlist"
-  else
-    echo "Invalid selection"
-  fi
+  echo "Select the action using up/down keys and enter to confirm:"
+  echo
+  options=("Download a video" "Extract the audio from a video" "Convert a media file" "Download video playlist" "Download audio playlist")
+  select_option "${options[@]}"
+  action=$?
+  # Use the case statement to perform different actions based on the user's input
+  case $action in
+    0)
+      echo "You selected Download a video"
+      ACTION="download"
+      ;;
+    1)
+        echo "You selected Extract the audio from a video"
+      ACTION="extract"
+      ;;
+    2)
+      echo "You selected Convert a media file"
+      ACTION="convert"
+      ;;
+    3)
+      echo "You selected Download video playlist"
+      ACTION="v_playlist"
+      ;;
+    4)
+      echo "You selected Download audio playlist"
+      ACTION="a_playlist"
+      ;;
+    *)
+      echo "Invalid option"
+      ;;
+  esac
   # Export the user's input variable
   export ACTION
 }
 
 ListFormats() {
-  # Display the list of choices to the user
-  echo ""
-  echo "Choose a format for the media to download:"
-  echo "1. mp4"
-  echo "2. mkv"
-  echo "3. avi"
-  echo "4. m4a"
-  echo "5. flv"
-  echo "6. webm"
-  # Read the user's input and save it in a variable
-  read -p "Enter your selection: " choice
-  # Use the if statement to perform different actions based on the user's input
-  if [ "$choice" = "1" ]; then
-    echo "You selected mp3."
-    M_FORMAT="mp4"
-  elif [ "$choice" = "2" ]; then
-    echo "You selected mp4"
-    M_FORMAT="mkv"
-  elif [ "$choice" = "3" ]; then
-    echo "You selected mkv"
-    M_FORMAT="avi"
-  elif [ "$choice" = "4" ]; then
-    echo "You selected avi"
-    M_FORMAT="m4a"
-  elif [ "$choice" = "5" ]; then
-    echo "You selected m4a"
-    M_FORMAT="flv"
-  elif [ "$choice" = "6" ]; then
-    echo "You selected wav"
-    M_FORMAT="webm"
-  else
-    echo "Invalid selection"
-  fi
+  echo "Select the format using up/down keys and enter to confirm:"
+  echo
+  options=(" mp4" " mkv" " avi" " m4a" " flv" " webm")
+  select_option "${options[@]}"
+  media_format=$?
+  # Use the case statement to perform different actions based on the user's input
+  case $media_format in
+    0)
+      echo "You selected mp4"
+      M_FORMAT="mp4"
+      ;;
+    1)
+      echo "You selected mkv"
+      M_FORMAT="mkv"
+      ;;
+    2)
+      echo "You selected avi"
+      M_FORMAT="avi"
+      ;;
+    3)
+      echo "You selected m4a"
+      M_FORMAT="m4a"
+      ;;
+    4)
+      echo "You selected flv"
+      M_FORMAT="flv"
+      ;;
+    5)
+      echo "You selected webm"
+      M_FORMAT="webm"
+      ;;
+    *)
+      echo "Invalid option"
+      ;;
+  esac
   # Export the user's input variable
   export M_FORMAT
 }
 
 ListAudioFormats() {
-  # Display the list of choices to the user
-  echo ""
-  echo "Choose a format for the converted media:"
-  echo "1. mp3"
-  echo "2. wav"
-  echo "3. flac"
-  # Read the user's input and save it in a variable
-  read -p "Enter your selection: " choice
-  # Use the if statement to perform different actions based on the user's input
-  if [ "$choice" = "1" ]; then
-    echo "You selected mp3."
-    A_FORMAT="mp3"
-  elif [ "$choice" = "2" ]; then
-    echo "You selected wav"
-    A_FORMAT="wav"
-  elif [ "$choice" = "3" ]; then
-    echo "You selected flac"
-    A_FORMAT="flac"
-  else
-    echo "Invalid selection"
-  fi
+  echo "Select the audio format using up/down keys and enter to confirm:"
+  echo
+  options=("mp3" "flac" "wav")a
+  select_option "${options[@]}"
+  audio_format=$?
+  # Use the case statement to perform different actions based on the user's input
+  case $audio_format in
+    0)
+      echo "You selected mp3"
+      AUDIO_FORMAT="mp3"
+      ;;
+    1)
+      echo "You selected flac"
+      AUDIO_FORMAT="flac"
+      ;;
+    2)
+      echo "You selected wav"
+      AUDIO_FORMAT="wav"
+      ;;
+    *)
+      echo "Invalid option"
+      ;;
+  esac
   # Export the user's input variable
-  export A_FORMAT
+  export AUDIO_FORMAT
 }
 
 InsertURL() {
