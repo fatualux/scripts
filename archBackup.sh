@@ -1,6 +1,5 @@
 #!/bin/bash
 #
-#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the Affero GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +12,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#
 #
 FILELIST=('.bash_profile' '.bashrc' '.bash_history' '.vimrc' '.xinitrc' '.Xdefaults')
 FOLDERLIST=('.config' '.local' '.cache' '.scripts' '.themes' '.fonts' '.w3m' '.ssh')

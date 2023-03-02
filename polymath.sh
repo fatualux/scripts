@@ -1,7 +1,8 @@
-#!/bin/sh
-#It depends on: bash tesseract (https://github.com/tesseract-ocr/tesseract), zenity (https://github.com/matthew-brett/zenity)
+#!/bin/bash
+#This script runs Docker Polymath object and works on the content of input folder
+#It depends on: bash docker polymath (https://github.com/samim23/polymath)
 
-################################ FUNCTIONS ################################
+WORKDIR="$HOME/Documents/github/polymath"
 
 # creates a list of options selectable by the arrow keys
 function select_option {
@@ -62,98 +63,57 @@ function select_option {
     return $selected
 }
 
-ListLanguages() {
-  echo "Select one option using up/down keys and enter to confirm:"
+ChooseAction() {
+  echo "Select the action you want to perform:"
   echo
-  options=("English" "French" "Spanish" "German" "Italian" "Japanese" "Hindi" "Russian" "Chinese")
+  options=("Download an audio file" "Split tracks" "Transform to midi" "Quantize a song")
   select_option "${options[@]}"
-  lang=$?
+  ACTION=$?
   # Use the case statement to perform different actions based on the user's input
-  case $lang in
+  case $ACTION in
     0)
-      echo "You selected English"
-      LANG="eng"
+        echo ""
+        echo "Paste the last part of a YouTube URL:"
+        read -r URL
+        COMMAND="polymath python /polymath/polymath.py -a $URL"
       ;;
     1)
-      echo "You selected French"
-      LANG="fra"
+        echo ""
+        echo "Input folder added."
+        COMMAND="polymath python /polymath/polymath.py -a $WORKDIR/input"
       ;;
     2)
-      echo "You selected Spanish"
-      LANG="spa"
+        echo ""
+        echo "Input folder added."
+        echo "Choose a BPM:"
+        read -r BPM
+        COMMAND="polymath python /polymath/polymath.py -a $WORKDIR/input -q all -t $BPM -m"
       ;;
     3)
-      echo "You selected German"
-      LANG="deu"
+        echo ""
+        echo "Input folder added."
+        echo "Choose a BPM:"
+        read -r BPM
+        COMMAND="polymath python /polymath/polymath.py -q all -t $BPM"
       ;;
-    4)
-      echo "You selected Italian"
-      LANG="ita"
-      ;;
-    5)
-      echo "You selected Japanese"
-      LANG="jpn"
-      ;;
-    6)
-      echo "You selected Hindi"
-      LANG="hin"
-      ;;
-    7)
-      echo "You selected Russian"
-      LANG="rus"
-      ;;
-    8)
-      echo "You selected Chinese"
-      LANG="chi-tra"
+    *)
+      echo "Invalid option"
+      ChooseAction
       ;;
   esac
-
-  # Export the user's input variable
-  export LANG
+      export COMMAND
 }
 
-# List output formats
-ListOutputs() {
-  echo "Select one option using up/down keys and enter to confirm:"
-  echo
-  options=("Text" "PDF")
-  select_option "${options[@]}"
-  output=$?
-  # Use the case statement to perform different actions based on the user's input
-  case $output in
-    0)
-      echo "You selected Text"
-      OUTPUT="txt"
-      ;;
-    1)
-      echo "You selected PDF"
-      OUTPUT="pdf"
-      ;;
-  esac
+ChooseAction
 
-  # Export the user_input variable
-  export OUTPUT
-}
+DockerRun() {
+  docker run \
+      -v "$WORKDIR"/processed:/polymath/processed \
+      -v "$WORKDIR"/separated:/polymath/separated \
+      -v "$WORKDIR"/library:/polymath/library \
+      -v "$WORKDIR"/input:/polymath/input \
+      $COMMAND
+    }
 
-SelectFile() {
-  files=$(zenity --title "Which file do you want to transcribe?"  --file-selection --multiple --filename=$HOME/)
-  [[ "$files" ]] || exit 1
-  echo $files | tr "|" "\n" | while read file
-  do
-    echo "$file" >> files.txt
-  done
-}
+DockerRun
 
-################################## SCRIPT ##################################
-
-SelectFile
-ListLanguages
-ListOutputs
-
-IFS=$'\n'
-for FILE in $(cat files.txt);
-do
-  tesseract "$FILE" "$FILE" "$OUTPUT" -l "$LANG"
-done
-rm files.txt
-echo "Done!"

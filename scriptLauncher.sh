@@ -1,4 +1,6 @@
 #!/bin/sh
+#This script is used to launch other scripts.
+#It depends on: bash
 
 ################################ FUNCTIONS ################################
 
@@ -63,8 +65,10 @@ function select_option {
 
 ListActions() {
   echo "Select one option using up/down keys and enter to confirm:"
-  echo
-  options=("1. Alarm", "2. Clean Arch", "3. Transcribe media files", "4. OCR transcripion", "5. Translate text", "6. Download/convert media from the Internet")
+  echo ""
+  options=("1. Alarm" "2. Clean Arch" "3. Transcribe media files" "4. OCR translation" \
+           "5. Translate text" "6. Download/convert media from the Internet" "7. New script template" \
+           "8. Polymath")
   select_option "${options[@]}"
   action=$?
   # Use the case statement to perform different actions based on the user's input
@@ -82,7 +86,7 @@ ListActions() {
       SCRIPT="whisper.sh"
       ;;
     3)
-      echo "You chose to try an OCR transcripion."
+      echo "You chose to try an OCR translation."
       SCRIPT="tesseract.sh"
       ;;
     4)
@@ -92,6 +96,14 @@ ListActions() {
     5)
       echo "You chose to download/convert a media from the Internet."
       SCRIPT="yt-downloader.sh"
+      ;;
+    6)
+      echo "You chose to create a new bash script template."
+      SCRIPT="newScript.sh"
+      ;;
+    7)
+      echo "You chose Docker Polymath."
+      SCRIPT="polymath.sh"
       ;;
     *)
       echo "Invalid selection"

@@ -1,5 +1,7 @@
 #!/bin/sh
-#This script requires the following packages to work properly: dunst yt-dlp ffmpeg zenity
+#This script opens a shell prompt, asks user for the video url and lists all available format of the medium.
+#Then, it asks the user to choose between five common video/audio formats and for a name to give to the downloaded file, and saves it to the user's home directory.
+#It depends on: bash yt-dlp ffmpeg zenity
 
 /bin/dunstify '.:Youtube-Downloader:.'
 
@@ -99,7 +101,7 @@ ListActions() {
   export ACTION
 }
 
-ListFormats() {
+ListVideoFormats() {
   echo "Select the format using up/down keys and enter to confirm:"
   echo
   options=(" mp4" " mkv" " avi" " m4a" " flv" " webm")
@@ -109,27 +111,67 @@ ListFormats() {
   case $media_format in
     0)
       echo "You selected mp4"
-      M_FORMAT="mp4"
+      V_FORMAT="mp4"
       ;;
     1)
       echo "You selected mkv"
-      M_FORMAT="mkv"
+      V_FORMAT="mkv"
       ;;
     2)
       echo "You selected avi"
-      M_FORMAT="avi"
+      V_FORMAT="avi"
       ;;
     3)
       echo "You selected m4a"
-      M_FORMAT="m4a"
+      V_FORMAT="m4a"
       ;;
     4)
       echo "You selected flv"
-      M_FORMAT="flv"
+      V_FORMAT="flv"
       ;;
     5)
       echo "You selected webm"
-      M_FORMAT="webm"
+      V_FORMAT="webm"
+      ;;
+    *)
+      echo "Invalid option"
+      ;;
+  esac
+  # Export the user's input variable
+  export V_FORMAT
+}
+
+ListMediaFormats() {
+  echo "Select the audio format using up/down keys and enter to confirm:"
+  echo
+  options=("mp3" "flac" "wav" "mp4" "mkv" "avi")
+  select_option "${options[@]}"
+  audio_format=$?
+  # Use the case statement to perform different actions based on the user's input
+  case $audio_format in
+    0)
+      echo "You selected mp3"
+      M_FORMAT="mp3"
+      ;;
+    1)
+      echo "You selected flac"
+      M_FORMAT="flac"
+      ;;
+    2)
+      echo "You selected wav"
+      M_FORMAT="wav"
+      ;;
+    3)
+      echo "You selected mp4"
+      M_FORMAT="mp4"
+      ;;
+    4)
+      echo "You selected mkv"
+      M_FORMAT="mkv"
+      ;;
+    5)
+      echo "You selected avi"
+      M_FORMAT="avi"
       ;;
     *)
       echo "Invalid option"
@@ -137,34 +179,6 @@ ListFormats() {
   esac
   # Export the user's input variable
   export M_FORMAT
-}
-
-ListAudioFormats() {
-  echo "Select the audio format using up/down keys and enter to confirm:"
-  echo
-  options=("mp3" "flac" "wav")a
-  select_option "${options[@]}"
-  audio_format=$?
-  # Use the case statement to perform different actions based on the user's input
-  case $audio_format in
-    0)
-      echo "You selected mp3"
-      AUDIO_FORMAT="mp3"
-      ;;
-    1)
-      echo "You selected flac"
-      AUDIO_FORMAT="flac"
-      ;;
-    2)
-      echo "You selected wav"
-      AUDIO_FORMAT="wav"
-      ;;
-    *)
-      echo "Invalid option"
-      ;;
-  esac
-  # Export the user's input variable
-  export AUDIO_FORMAT
 }
 
 InsertURL() {
@@ -194,30 +208,30 @@ if [ "$ACTION" = "download" ]; then
   InsertURL
   echo "Searching for available formats..."
   yt-dlp --all-formats --get-file "$URL"
-  ListFormats
+  ListVideoFormats
   echo "Downloading..."
-  yt-dlp -o "Media/%(title)s"".$M_FORMAT" -f "$M_FORMAT" -i --hls-prefer-ffmpeg --print-traffic "$URL" --lazy-playlist
+  yt-dlp -o "Media/%(title)s"".$V_FORMAT" -f "$V_FORMAT" -i --hls-prefer-ffmpeg --print-traffic "$URL" --lazy-playlist
   echo "Done!"
 fi
 if [ "$ACTION" = "extract" ]; then
   echo ""
   echo "AUDIO EXTRACTOR"
   InsertURL
-  ListAudioFormats
-  yt-dlp --audio-quality "ba" -x --audio-format "$A_FORMAT" "$URL" -o "Media/%(title)s.%(ext)s"
+  ListMediaFormats
+  yt-dlp --audio-quality "ba" -x --audio-format "$M_FORMAT" "$URL" -o "Media/%(title)s.%(ext)s"
   echo "Done!"
 fi
 if [ "$ACTION" = "convert" ]; then
   echo ""
   echo "MEDIA CONVERTER"
   SelectFile
-  ListFormats
+  ListMediaFormats
   IFS=$'\n'
   for FILE in $(cat files.txt);
   do
       FILENAME=`basename "${FILE}"`
       echo $FILENAME
-      ffmpeg -i "$FILE" "Media/${FILE%.*}.$M_FORMAT";
+      ffmpeg -i "$FILE" "${FILE%.*}.$M_FORMAT";
   done
   rm files.txt
   echo "Done!"
@@ -226,7 +240,7 @@ if [ "$ACTION" = "v_playlist" ]; then
   echo ""
   echo "VIDEO PLAYLIST DOWNLOADER"
   InsertURL
-  ListFormats
+  ListVideoFormats
   yt-dlp -f 'bv*[height=1080]+ba' "$URL" -o 'VideoPlaylist/%(title)s.%(ext)s'
   echo "Downloading..."
   echo "Done!"
@@ -235,7 +249,7 @@ if [ "$ACTION" = "a_playlist" ]; then
   echo ""
   echo "AUDIO PLAYLIST DOWNLOADER"
   InsertURL
-  ListAudioFormats
+  ListMediaFormats
   yt-dlp --audio-quality "ba" -x --audio-format "$A_FORMAT" "$URL" -o 'AudioPlaylist/%(title)s.%(ext)s'
   echo "Downloading..."
   echo "Done!"

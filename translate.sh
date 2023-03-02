@@ -1,5 +1,7 @@
-#! /bin/bash
-#This script requires the following packages to work properly: dunst translate-shell
+#!/bin/bash
+#This script requires the installation on translate-shell, a command-line translator powered by Google Translate (default),
+#Bing Translator, Yandex.Translate, and Apertium (https://github.com/soimort/translate-shell).
+#It depends on: bash translate-shell
 
 ################################ FUNCTIONS ################################
 

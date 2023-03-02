@@ -1,8 +1,6 @@
-#! /bin/bash
-#! /bin/sh
-#This script requires the following packages to work properly: dunst w3m
-
-/bin/dunstify ".:W3M - Web Browser:."
+#!/bin/bash
+#This script opens a shell prompt, asks user for a text and search that on google.com.
+#It depends on: bash w3m
 
 COLS=$(tput cols)
 text="What are you looking for?"
@@ -12,10 +10,8 @@ printf "%*s\n" $((COLS/2+h_text/2)) "$text"
 echo ""
 echo ""
 
-read -r query
+read -r QUERY
 
-URL=$(echo -ne "http://www.google.com/search?ie=ISO-8859-1&hl=it&source=hp&q=""$query")
+URL=$(echo -ne "http://www.google.com/search?ie=ISO-8859-1&hl=it&source=hp&q=""$QUERY")
 
 w3m "$URL"
-
-
