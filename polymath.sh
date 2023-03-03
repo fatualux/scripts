@@ -80,14 +80,14 @@ ChooseAction() {
     1)
         echo ""
         echo "Input folder added."
-        COMMAND="polymath python /polymath/polymath.py -a $WORKDIR/input"
+        COMMAND="polymath python /polymath/polymath.py -a /polymath/input/"
       ;;
     2)
         echo ""
         echo "Input folder added."
         echo "Choose a BPM:"
         read -r BPM
-        COMMAND="polymath python /polymath/polymath.py -a $WORKDIR/input -q all -t $BPM -m"
+        COMMAND="polymath python /polymath/polymath.py -q all -t $BPM -m"
       ;;
     3)
         echo ""
