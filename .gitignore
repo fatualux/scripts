@@ -5,7 +5,7 @@
 *.log
 
 archClean.sh
-realtime-transcriber.py
-updatemirrors.sh
+updateMirrors.sh
 git.sh
-
+sortRemove.sh
+updateMirrors.sh
