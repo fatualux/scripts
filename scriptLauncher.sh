@@ -66,8 +66,8 @@ function select_option {
 ListActions() {
   echo "Select one option using up/down keys and enter to confirm:"
   echo ""
-  options=("1. Alarm" "2. Clean Arch" "3. Transcribe media files" "4. OCR translation" \
-           "5. Translate text" "6. Download/convert media from the Internet" "7. New script template" \
+  options=("1. Alarm" "2. Clean Arch" "3. Transcribe media" "4. OCR translation" \
+           "5. Translate text" "6. Download/convert media" "7. New script" \
            "8. Polymath")
   select_option "${options[@]}"
   action=$?
@@ -95,7 +95,7 @@ ListActions() {
       ;;
     5)
       echo "You chose to download/convert a media from the Internet."
-      SCRIPT="yt-downloader.sh"
+      SCRIPT="dlConv.sh"
       ;;
     6)
       echo "You chose to create a new bash script template."

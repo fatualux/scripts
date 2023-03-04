@@ -11,24 +11,19 @@ It is a basic bash script which requires the installation on **translate-shell**
 If executed, it opens a shell prompt, asks user for a text and translate it in Italian.
 You can change the language by editing line 16 (`man trans` for more info)
 
-## web_search.sh
+## webSearch.sh
 
 It is a basic bash script which requires the installation on **w3m**, a text based web-browser.
 
 If executed, it opens a shell prompt, asks user for a text and search that on *google.com*.
 You can change the search engine by editing line 17.
 
-## youtube-dl.sh
+## dlconv.sh
 
 It is a basic bash script which requires the installation on **yt-dlp** (https://github.com/yt-dlp/yt-dlp), a tool designed to  download videos from *youtube.com* or other video platforms.
 
 If executed, it opens a shell prompt, asks user for the video url and lists all available format of the medium.
 Then, it asks the user to choose between five common video/audio formats and for a name to give to the downloaded file, and saves it to the user's home directory.
-
-## media-converter.sh
-
-It is a basic bash script which requires the installation on **ffmpeg**, a collection of libraries and tools to process multimedia content (https://github.com/FFmpeg/FFmpeg).
-If executed, it opens a shell prompt, asks user to enter the path/to/the/file and to choose between six common extensions for the output file.
 
 ## whisper.sh
 
