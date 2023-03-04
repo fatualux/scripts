@@ -2,7 +2,7 @@
 #This script runs Docker Polymath object and works on the content of input folder
 #It depends on: bash docker polymath (https://github.com/samim23/polymath)
 
-WORKDIR="$HOME/Documents/github/polymath"
+WORKDIR="$HOME/Docker/polymath"
 
 # creates a list of options selectable by the arrow keys
 function select_option {
