@@ -118,8 +118,11 @@ ListLanguages
 
 echo ""
 echo "Word or phrase?"
-
-read -r TERM
+echo "(Press Ctrl + D when you have done typing, or Ctrl + C to cancel)"
+echo ""
+echo "________________________________________"
+echo ""
+read -r -d $'\04' TERM
 echo Translating...
 
 trans -no-play -t "$LANG" "$TERM"
